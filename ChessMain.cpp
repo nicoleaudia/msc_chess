@@ -187,11 +187,16 @@ int main() {
 	cb.loadState("r1bqk2r/p1pn2p1/1p2pn1P/8/3P4/B1PB4/P1P2PPP/R3K1NR w KQkq"); //this is after F7E6, so black will be in checkmate after this move
 	cb.submitMove("D3", "G6");
 	cout << '\n';
+	
 
-*/
+	//stalemate test
+	cout << "stalemate test\n";
+	cb.loadState("pK6/8/8/8/8/8/5Q2/7k w KQkq");
+	cb.submitMove("B8", "A8"); //white's move removes all valid moves for blackm thus stalemate
+	
+	*/
 
 
-	//chess game 
 	
 	cout << "=========================\n";
 	cout << "Alekhine vs. Vasic (1931)\n";

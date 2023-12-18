@@ -18,38 +18,38 @@ void ChessBoard::loadState(const char* fenRecord){
 
   int index = 0, row = 0, col = 0;
 
-  // loop through fen string until space (denotes we've passed the last square on the board)
+  //loop through FEN string until space (denotes we've passed the last square on the board)
   while (fenRecord[index] != ' '){
 
-    // if you hit an end of row marker (/), reset the col value to 0 and increment the row value
+    //if you hit an end-of-row marker (/), reset the col value to 0 and increment the row value to load next row
     if (fenRecord[index] == '/'){
       index++;
       row++;
       col = 0;
     }
 
-    // if you hit 1-8, determine the number of blank spaces to insert
+    //if you hit 1-8, determine the number of continuous blank squares on the board
     if (fenRecord[index] >= '1' && fenRecord[index] <= '8'){
 
-      // save number of blank spaces to insert into a variable
-      int blankSpaceNeeded;
-      blankSpaceNeeded = (fenRecord[index] - '0');
+      //save number of blank squares into a variable
+      int blankSquaresNeeded;
+      blankSquaresNeeded = (fenRecord[index] - '0');
 
-      // index to use in while loop
-      int blankSpaceIndex = 0;
+      //set index variable to use in while loop
+      int blankSquaresIndex = 0;
 
-      // insert a null pointer (representing an empty space) into pointer array (the board)
-      while (blankSpaceIndex < blankSpaceNeeded){
+      //insert a null pointer (representing an empty square) into 2D array (the board)
+      while (blankSquaresIndex < blankSquaresNeeded){
         boardLayout[row][col] = nullptr;
-        blankSpaceIndex++;
+        blankSquaresIndex++;
         col++;
       }
       
-      //index (just once for the char)
+      //increment index (just once for the char in the FEN string)
       index++;
     }
     
-
+    //call pieceIdentifier to figure out what type of chess piece should be loaded onto board
     else {
       char currentFenChar = fenRecord[index];
       ChessPiece* ptr = pieceIdentifier(currentFenChar);
@@ -70,13 +70,13 @@ void ChessBoard::loadState(const char* fenRecord){
     turnColor = black;
   }
   
-  //move the index by 2 to reach the castling characters
-  index+=2; //start of castling bit of fen
+  //move the index by 2 to reach the castling characters 
+  index+=2; //start of castling bit of FEN
 
   cout << "A new board state is loaded!\n";
 }
 
-//determine type of piece based on char in fen string
+//determine type and color of chess piece based on char in FEN string
 ChessPiece* ChessBoard::pieceIdentifier(char fenChar){
   ChessPiece* ptr;
 
@@ -98,19 +98,21 @@ ChessPiece* ChessBoard::pieceIdentifier(char fenChar){
     ptr = new Queen(pieceFenColor);
   }
   else if (fenChar == 'k'){
-    blackKingPtr = new King(pieceFenColor);
+    blackKingPtr = new King(pieceFenColor); //blackKingPtr for use in findKing method for determining check
     ptr = blackKingPtr;
   }
   else if (fenChar == 'K'){
-    whiteKingPtr = new King(pieceFenColor);
+    whiteKingPtr = new King(pieceFenColor); //whiteKingPtr for use in findKing method for determining check
     ptr = whiteKingPtr;
   }
   else {
-    cerr << "Not a valid fen record character.\n";
+    cerr << "Not a valid FEN record character.\n";
     ptr = nullptr;
   }  
   return ptr;
 }
+
+
 
 Color ChessBoard::getFenColor(char fenChar){
   if (fenChar >= 'B' && fenChar <= 'R'){
@@ -122,27 +124,24 @@ Color ChessBoard::getFenColor(char fenChar){
 }
 
 
-//submitMove function ----------------------------------------------------------------------------------------------------
 
 void ChessBoard::submitMove(const char* startingPosition, const char* moveToPosition){
 
   int startingRow, startingCol, moveToRow, moveToCol;
 
-  //RUN CHECKS TO DETERMINE VALIDITY OF PIECE AND MOVE
+  //run a series of checks to determine legality and validity of move on board
 
   //determine starting position on board
   startingCol = startingPosition[0] - 'A';
   startingRow = 7 - (startingPosition[1] - '1');
 
   ChessPiece* pieceToMove = boardLayout[startingRow][startingCol];
-  //cout << pieceToMove << endl;
 
-
-  //determine goal position to move piece to on board
+  //determine goal position for piece to move to on board
   moveToCol = moveToPosition[0] - 'A';
   moveToRow = 7 - (moveToPosition[1] - '1');
 
-  //check goal position is on the board
+  //check that goal position is on the board
   if ((moveToRow < 0) || (moveToRow > 7) || (moveToCol < 0) || (moveToCol > 7)){
     cout << "Destination square is not within board's range." << endl;
     return;
@@ -153,7 +152,7 @@ void ChessBoard::submitMove(const char* startingPosition, const char* moveToPosi
     return;
   }
   
-  //check if starting spot on board has a nullptr (ie, no piece)
+  //check if starting spot on board has a nullptr (ie, no piece in square)
   if (pieceToMove == nullptr){
     cout << "There is no piece at position " << startingPosition << "!" << endl;
     return;
@@ -166,27 +165,29 @@ void ChessBoard::submitMove(const char* startingPosition, const char* moveToPosi
   }
   
   //override virtual method to determine if move is valid for that type of piece
-  if (!pieceToMove->isValidMove(*this, startingRow, startingCol, moveToRow, moveToCol)){ //notation means "if false"
+  if (!pieceToMove->isValidMove(*this, startingRow, startingCol, moveToRow, moveToCol)){ 
     cout << pieceToMove->getColor() << "'s " << pieceToMove->getName() << " cannot move to " << moveToPosition << "!" << endl;
     return;
   } 
 
-  //at this point, doesn't matter if color is in check or not. just want to make sure willMovePutInCheck returns false.
-  //if color is in check already (due to opposite color), it is not in checkmate (or else the game would've ended). so, there is a legal move that can be made here that gets out of check
+  //check that the move does not put color's own king in check
+  //note that if current color's king is in check already (due to opposite color's move), it is not in checkmate (or else the game would've ended)
+  //so if the color's king is in check, a legal move exists that color can make to get out of check
   if (willMovePutKingInCheck(turnColor, startingRow, startingCol, moveToRow, moveToCol)){
-    cout << "move will put king in check" << endl;
+    cout << "Cannot make this move, as it will put own King in check" << endl;
     return;
   }
 
   ChessPiece* pieceToTake = boardLayout[moveToRow][moveToCol];
 
-  //check if there is a piece OF THE OPPOSITE COLOR to be taken at that spot
+  //check if there is a piece of the opposite to be taken at that spot
   if (pieceToTake != nullptr && pieceToTake->getColor() == pieceToMove->getColor()){
-    cout << "TESTING SUBMITMOVE - " << pieceToTake->getName() << " piece in spot is same color" << endl;
+    cout << "Cannot make this move, as the " << pieceToTake->getName() << "in this spot is own color" << endl;
     return;
   }
 
-  //now we've done the checks. time to update the board
+  //at this point, checks have determined move is legal and valid, so board can be updated
+  
   //update board to store nullptr where piece used to be, and store piece data at new location
   boardLayout[startingRow][startingCol] = nullptr;
   boardLayout[moveToRow][moveToCol] = pieceToMove;
@@ -200,10 +201,10 @@ void ChessBoard::submitMove(const char* startingPosition, const char* moveToPosi
   
   cout << endl;
 
-  //set currentTurnColor flag
+  //set currentTurnColor flag to indicate it's opposite color's turn to make a move
   turnColor = (turnColor == white) ? black : white;
 
-  //check if move put opposite color in check. if yes, additionally check for checkmate or stalemate
+  //check if move put opposite color in check; if yes, additionally check for checkmate, which ends game
   if (isKingInCheck(turnColor)){
     if (isKingInCheckMate(turnColor)){
       cout << turnColor << " is in checkmate" << endl;
@@ -212,21 +213,27 @@ void ChessBoard::submitMove(const char* startingPosition, const char* moveToPosi
     }
     cout << turnColor << " is in check" << endl;
   }
+  //check if move prevents opposite color from making any valid move; if so, end game in stalemate
+  else {
+    if (isStalemate(turnColor)){
+      cout << turnColor << " has no valid moves, and thus the game ends in a stalemate" << endl;
+      cout << '\n';
+      exit(0); //end program
+    }
+  }
 return;
 } 
 
 
 
-
-//isDiagonalClear- --------------------------------------------------------------------
 bool ChessBoard::isDiagonalClear(int startingRow, int startingCol, int moveToRow, int moveToCol){
   int rowDiff = moveToRow - startingRow;
   int colDiff = moveToCol - startingCol;
 
   assert(abs(rowDiff) == abs(colDiff)); //if this condition isn't met, throw an error
 
-  int rowDir = sign(rowDiff); //function assigns 1 or -1 to rowDir
-  int colDir = sign(colDiff); //function assigns 1 or -1 to rowCol
+  int rowDir = sign(rowDiff); //function assigns 1, 0, or -1 to rowDir to represent its sign
+  int colDir = sign(colDiff); //function assigns 1, 0, or -1 to colDir to represent its sign
 
   int r = startingRow + rowDir;
   int c = startingCol + colDir;
@@ -241,15 +248,16 @@ bool ChessBoard::isDiagonalClear(int startingRow, int startingCol, int moveToRow
   return true;
 }
 
-//isStraightClear -------------------------------------------------------------------
+
+
 bool ChessBoard::isStraightClear(int startingRow, int startingCol, int moveToRow, int moveToCol){
   int rowDiff = moveToRow - startingRow;
   int colDiff = moveToCol - startingCol;
 
   assert(rowDiff == 0 || colDiff == 0); //if this condition isn't met, throw an error
 
-  int rowDir = sign(rowDiff); //function assigns 1 or -1 to rowDir
-  int colDir = sign(colDiff); //function assigns 1 or -1 to rowCol
+  int rowDir = sign(rowDiff); //function assigns 1, 0, or -1 to rowDir to represent its sign
+  int colDir = sign(colDiff); //function assigns 1, 0, or -1 to colDir to represent its sign
 
   int r = startingRow + rowDir;
   int c = startingCol + colDir;
@@ -265,12 +273,13 @@ bool ChessBoard::isStraightClear(int startingRow, int startingCol, int moveToRow
 }
 
 
-//getPiece ---------------------------------------------------------------------------
+
 ChessPiece* ChessBoard::getPiece(int row, int col) const{
   return boardLayout[row][col];
 }
 
-//findKing ------------------------------------------------------------------------
+
+
 void ChessBoard::findKing(King* king, int &row, int &col){
   for (row = 0; row < 8; row++){
     for (col = 0; col < 8; col++){
@@ -282,9 +291,8 @@ void ChessBoard::findKing(King* king, int &row, int &col){
 }
 
 
-//check functions -----------------------------------------------------------------
+
 bool ChessBoard::isKingInCheck(Color c){
-  //this function looks for move by the attacking color
 
   King* king = (c == white) ? whiteKingPtr : blackKingPtr; //if color is white, assign whiteKingPtr to king; otherwise, assign blackKingPtr
   Color attackingColor = (c == white) ? black : white; //if color is white, assign black (opposite color) to attackingColor; otherwise, assign white
@@ -296,7 +304,7 @@ bool ChessBoard::isKingInCheck(Color c){
   for (int pieceRow = 0; pieceRow < 8; pieceRow++){
     for (int pieceCol = 0; pieceCol < 8; pieceCol++){
       ChessPiece* piece = getPiece(pieceRow, pieceCol);
-      if (piece != nullptr && piece->getColor() == attackingColor){ //need to check that it isn't nullptr to prevent segfault
+      if (piece != nullptr && piece->getColor() == attackingColor){ 
         if (piece->isValidMove(*this, pieceRow, pieceCol, kingRow, kingCol)){
           return true; //exit function as soon as any valid move that could attack the king is found
         }
@@ -306,7 +314,8 @@ bool ChessBoard::isKingInCheck(Color c){
   return false; //if there are no pieces of the opposite color that could attack the king, the king is not in check and thus function returns false
 }
 
-//willMovePutInCheck ----------------------------------------------------------------------------------------- 
+
+
 bool ChessBoard::willMovePutKingInCheck(Color c, int startingRow, int startingCol, int moveToRow, int moveToCol){
     
   ChessPiece* pieceToMove = boardLayout[startingRow][startingCol];
@@ -326,30 +335,41 @@ bool ChessBoard::willMovePutKingInCheck(Color c, int startingRow, int startingCo
   return checkResult;
 }
 
-//isInCheckMate ----------------------------------------------------------------------------------------- 
+
+
 bool ChessBoard::isKingInCheckMate(Color c){
  
-  bool isKingInCheckFlag = isKingInCheck(c);
-
-  //safeguard to ensure king is actually in check and thus could be in checkmate
-  if (!isKingInCheckFlag){
+  if (!isKingInCheck(c)){ //cannot be in checkmate unless king is already in check
     return false;
+  } 
+  if(!searchForValidMoves(c)){
+    return true; //if no valid moves can be found to get king out of check, color is in checkmate
   }
+  return false;
+}
+
+
+
+bool ChessBoard::searchForValidMoves(Color c){
 
   for (int pieceRow = 0; pieceRow < 8; pieceRow++){
     for (int pieceCol = 0; pieceCol < 8; pieceCol++){ //loop through board
       ChessPiece* piece = getPiece(pieceRow, pieceCol); //grab piece
-      if (piece != nullptr && piece->getColor() == c){ //if piece is of current color, loop through possible moves from current position and see if any are valid.
+      if (piece != nullptr && piece->getColor() == c){ //if piece is of current color, loop through possible moves from current position and see if any are valid
         for (int pieceMoveToRow = 0; pieceMoveToRow < 8; pieceMoveToRow++){
           for (int pieceMoveToCol = 0; pieceMoveToCol < 8; pieceMoveToCol++){
 
             ChessPiece* targetPiece = getPiece(pieceMoveToRow, pieceMoveToCol);
-            if (targetPiece != nullptr && targetPiece->getColor() == c) { //if a piece will be taken as part of the move, ensure it is of the opposite color; if not, skip (continue)
+
+            if (pieceRow == pieceMoveToRow && pieceCol == pieceMoveToCol) { //skip (continue) if move is to starting square
               continue;
             }
-            if (piece->isValidMove(*this, pieceRow, pieceCol, pieceMoveToRow, pieceMoveToCol)){ //if there are valid moves for the piece of the current color, see if check goes away with this move
+            if (targetPiece != nullptr && targetPiece->getColor() == c) { //if a piece will be taken as part of the move, skip (continue) if piece is same color
+              continue;
+            }
+            if (piece->isValidMove(*this, pieceRow, pieceCol, pieceMoveToRow, pieceMoveToCol)){ //if there are valid moves for the piece of the current color, see if move puts/keeps king in check
               if (!willMovePutKingInCheck(c, pieceRow, pieceCol, pieceMoveToRow, pieceMoveToCol)){
-                return false; //if move takes color out of check, cannot be in checkmate, so return false
+                return true; //if move is allowed and king is not in check after the move, a valid move exists
               }
             }
           }
@@ -357,8 +377,23 @@ bool ChessBoard::isKingInCheckMate(Color c){
       }
     }
   }
-  return true;
+  return false; 
 }
+
+
+
+bool ChessBoard::isStalemate(Color c){
+
+  if (isKingInCheck(c)){ //cannot be in stalemate if king is currently in check
+    return false;
+  } 
+  if(!searchForValidMoves(c)){
+    return true; //if no valid moves can be found and king is not in check, game is in stalemate
+  }
+  return false;
+}
+
+
 
 void ChessBoard::printChessBoard() {
     const int colWidth = 18;

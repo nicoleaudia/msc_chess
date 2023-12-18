@@ -59,7 +59,9 @@ public:
    * ChessBoard. Loops through the FEN record to identify blank spaces,
    * black and white chess pieces, and their positions.  Blank spaces
    * will be represented by nullptrs and pieces are represented with
-   * board is loaded.
+   * board is loaded. Additionally assigns value white and black King pointers
+   * to variables whiteKingPtr and blackKingPtr respectively for use in
+   * finding the king on the board (see findKing method for details).
    * 
    * @param fenRecord: Takes a standard FEN record string representing
    * 64 total positions. Does not need to be playable chess configuration
@@ -163,7 +165,9 @@ public:
   void findKing(King* king, int& row, int& col);
 
   /* Purpose: Determines if a particular move of a chess piece will put the piece's 
-   * own (same color) king in check. 
+   * own (same color) king in check. King is represented by the value stored in 
+   * whiteKingPtr or blackKingPtr based on current color (see pieceIdentifier
+   * method for details). 
    * 
    * Should be called before a move is made by the current color. Can be used to 
    * determine validity of move, because a move may not put the piece's own king in check.
@@ -198,6 +202,29 @@ public:
   bool isKingInCheckMate(Color c);
 
 
+  /* Purpose: Determines if the chess game has reached a stalemate, meaning
+   * the current color is not in check but has no legal and valid moves it can make
+   * (without putting the king in check). If yes, the game ends.
+   *
+   * Should be called when the king is not in check (see isKingInCheck for details).
+   * 
+   * @param c: Takes a Color data type (defined in Color enumeration) representing
+   * the current turn color. 
+   */
+  bool isStalemate(Color c);
+
+  
+  /* Purpose: Loops through chess board (8x8 2D array) looking for all possible
+   * valid moves that do not result in the current color's king being in check.
+   *
+   * May be used for determining checkmate or stalemate.
+   * 
+   * @param c: Takes a Color data type (defined in Color enumeration) representing
+   * the current turn color. 
+  */
+  bool searchForValidMoves(Color c);
+  
+
   /* Purpose: Determines if a character from a chess FEN record string represents
    * a black or a white chess piece. A lowercase character represents a black piece,
    * and an uppercase character represents a white piece.
@@ -214,7 +241,8 @@ public:
   void printChessBoard();
 
 
-  // bool searchForValidMoves(Color c);
+ 
+
 
 };
 

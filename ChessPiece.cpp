@@ -1,14 +1,14 @@
 /* Implementation file for ChessPiece class  */
 
 #include <iostream>
-#include <cstdlib> //for absolute value
+#include <cstdlib> 
 #include <cassert>
 #include "ChessPiece.h"
 #include "ChessBoard.h"
 
 using namespace std;
 
-//overloads the output operator to output a string instead of an integer value for pieceColor
+//overloads the output operator to output a string instead of an integer value for color
 ostream &operator<<(ostream &out, const Color& color) {
   switch(color){
   case black:
@@ -29,7 +29,8 @@ Color ChessPiece::getColor(){
   return pieceColor;
 }
 
-//Pawn methods -------------------------------------------------------------------------------------------------------
+
+
 Pawn::Pawn(Color c) : ChessPiece(c) {}
 
 Pawn::~Pawn() {};
@@ -56,7 +57,7 @@ bool Pawn::isValidMove(ChessBoard &cb, int startingRow, int startingCol, int mov
     rowMoveDirection = 1;
   }
 
-  //if straight
+  //if proposed move is straight (horizontal or vertical)
   if (moveToCol == startingCol){
     if (cb.getPiece(moveToRow, moveToCol) == nullptr){
       if (isFirstMove(startingRow) && (moveToRow == startingRow + (rowMoveDirection * 2)) && cb.isStraightClear(startingRow, startingCol, moveToRow, moveToCol)){
@@ -71,7 +72,7 @@ bool Pawn::isValidMove(ChessBoard &cb, int startingRow, int startingCol, int mov
     }
   }
 
-  //if diagonal
+  //if proposed move is diagonal
   if (moveToRow == (startingRow + rowMoveDirection)){
     if ((moveToCol == startingCol + 1) || (moveToCol == startingCol - 1)){
       if (cb.getPiece(moveToRow, moveToCol) != nullptr){
@@ -87,7 +88,8 @@ const char* Pawn::getName(){
   return "Pawn";
 }
 
-//Knight methods -------------------------------------------------------------------------------------------------------
+
+
 Knight::Knight(Color c) : ChessPiece(c) {}
 
 Knight::~Knight() {};
@@ -96,7 +98,6 @@ bool Knight::isValidMove(ChessBoard &cb, int startingRow, int startingCol, int m
   //horizontal L-diagonal toward row 8, either left or right
   if (moveToRow == startingRow - 1){
     if ((moveToCol == startingCol + 2) || (moveToCol == startingCol - 2)){
-      //cout << "knight moves in horizontal L toward row 8 (top of board)" << endl;
       return true;
     }
   }
@@ -104,7 +105,6 @@ bool Knight::isValidMove(ChessBoard &cb, int startingRow, int startingCol, int m
   //vertical L-diagonal toward row 8, either left or right
   if (moveToRow == startingRow - 2){
     if ((moveToCol == startingCol + 1) || (moveToCol == startingCol - 1)){
-      //cout << "knight moves in vertical L toward row 8 (top of board)" << endl;
       return true;
     }
   }
@@ -112,7 +112,6 @@ bool Knight::isValidMove(ChessBoard &cb, int startingRow, int startingCol, int m
   //horizontal L-diagonal toward row 1, either left or right
   if (moveToRow == startingRow + 1){
     if ((moveToCol == startingCol + 2) || (moveToCol == startingCol - 2)){
-      //cout << "knight moves in horizontal L toward row 1 (bottom of board)" << endl;
       return true;
     }
   }
@@ -120,7 +119,6 @@ bool Knight::isValidMove(ChessBoard &cb, int startingRow, int startingCol, int m
   //vertical L-diagonal toward row 1, either left or right
   if (moveToRow == startingRow + 2){
     if ((moveToCol == startingCol + 1) || (moveToCol == startingCol - 1)){
-      //cout << "knight moves in vertical L toward row 1 (bottom of board)" << endl;
       return true;
     }
   }
@@ -131,7 +129,8 @@ const char* Knight::getName(){
   return "Knight";
 }
 
-//Bishop methods -------------------------------------------------------------------------------------------------------
+
+
 Bishop::Bishop(Color c) : ChessPiece(c) {}
 
 Bishop::~Bishop() {};
@@ -155,12 +154,13 @@ const char* Bishop::getName(){
 }
 
 
-//Rook methods -------------------------------------------------------------------------------------------------------
+
 Rook::Rook(Color c) : ChessPiece(c) {}
 
 Rook::~Rook() {};
 
 bool Rook::isValidMove(ChessBoard &cb, int startingRow, int startingCol, int moveToRow, int moveToCol) {
+
   if ((startingRow == moveToRow) || (startingCol == moveToCol)){
     if (cb.isStraightClear(startingRow, startingCol, moveToRow, moveToCol)){
     return true;
@@ -173,24 +173,26 @@ const char* Rook::getName(){
   return "Rook";
 }
 
-//Queen methods -------------------------------------------------------------------------------------------------------
+
+
 Queen::Queen(Color c) : ChessPiece(c) {}
 
 Queen::~Queen() {};
 
 bool Queen::isValidMove(ChessBoard &cb, int startingRow, int startingCol, int moveToRow, int moveToCol) {
+
+  //if proposed move is straight (horizontal or vertical)
   if ((startingRow == moveToRow) || (startingCol == moveToCol)){
     if (cb.isStraightClear(startingRow, startingCol, moveToRow, moveToCol)){
-    //cout << "queen will move straight." << endl;
     return true;  
     }
   }
 
+  //if proposed move is diagonal
   int n = abs(moveToRow - startingRow);
 
   if (n == abs(moveToCol - startingCol)){
     if (cb.isDiagonalClear(startingRow, startingCol, moveToRow, moveToCol)){
-      //cout << "queen will move diagonally." << endl;
       return true;
     }
   }
@@ -201,12 +203,14 @@ const char* Queen::getName(){
   return "Queen";
 }
 
-//King methods -------------------------------------------------------------------------------------------------------
+
+
 King::King(Color c) : ChessPiece(c) {}
 
 King::~King() {};
 
 bool King::isValidMove(ChessBoard &cb, int startingRow, int startingCol, int moveToRow, int moveToCol) {
+
   int rowDiff = moveToRow - startingRow;
   int colDiff = moveToCol - startingCol;
 
