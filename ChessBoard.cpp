@@ -201,7 +201,7 @@ void ChessBoard::submitMove(const char* startingPosition, const char* moveToPosi
 
   //check if there is a piece of the opposite to be taken at that spot
   if (pieceToTake != nullptr && pieceToTake->getColor() == pieceToMove->getColor()){
-    cout << "Cannot make this move, as the " << pieceToTake->getName() << "in this spot is own color" << endl;
+    cout << "Cannot make this move, as the " << pieceToTake->getName() << " in this spot is own color" << endl;
     return;
   }
 

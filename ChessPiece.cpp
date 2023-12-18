@@ -73,7 +73,7 @@ bool Pawn::isValidMove(ChessBoard &cb, int startingRow, int startingCol, int mov
   }
 
   //if proposed move is diagonal
-  if (moveToRow == (startingRow + rowMoveDirection)){
+  if (moveToRow == startingRow + rowMoveDirection){
     if ((moveToCol == startingCol + 1) || (moveToCol == startingCol - 1)){
       if (cb.getPiece(moveToRow, moveToCol) != nullptr){
         return true;
@@ -95,33 +95,14 @@ Knight::Knight(Color c) : ChessPiece(c) {}
 Knight::~Knight() {};
 
 bool Knight::isValidMove(ChessBoard &cb, int startingRow, int startingCol, int moveToRow, int moveToCol) {
-  //horizontal L-diagonal toward row 8, either left or right
-  if (moveToRow == startingRow - 1){
-    if ((moveToCol == startingCol + 2) || (moveToCol == startingCol - 2)){
-      return true;
-    }
-  }
+  
+  int rowDiff = abs(moveToRow - startingRow);
+  int colDiff = abs(moveToCol - startingCol);
 
-  //vertical L-diagonal toward row 8, either left or right
-  if (moveToRow == startingRow - 2){
-    if ((moveToCol == startingCol + 1) || (moveToCol == startingCol - 1)){
-      return true;
-    }
+  if ((rowDiff == 2 && colDiff == 1) || (rowDiff == 1 && colDiff == 2)) {
+    return true;
   }
-
-  //horizontal L-diagonal toward row 1, either left or right
-  if (moveToRow == startingRow + 1){
-    if ((moveToCol == startingCol + 2) || (moveToCol == startingCol - 2)){
-      return true;
-    }
-  }
-
-  //vertical L-diagonal toward row 1, either left or right
-  if (moveToRow == startingRow + 2){
-    if ((moveToCol == startingCol + 1) || (moveToCol == startingCol - 1)){
-      return true;
-    }
-  }
+  
   return false;
 }
 

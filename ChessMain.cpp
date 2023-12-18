@@ -32,7 +32,7 @@ int main() {
 	cout << "Nicole's tests for the Chess Engine\n";
 	cout << "===================================\n\n";
 
-	cb.loadState("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq"); //starting color = black
+	cb.loadState("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq");
 	cout << '\n';
 	
 	//invalid moves tests
@@ -129,8 +129,7 @@ int main() {
 	cb.submitMove("E2", "E4"); //failure -- white pawn cannot move 2 spaces forward on first move bc path is not clear
 	cout << '\n';
 
-	
-
+	//input valid white move to start rook tests
 	//rook tests
 	cb.submitMove("A8", "A5"); //black rook successfully moves 3 spaces forward
 	cout << '\n';
@@ -144,17 +143,32 @@ int main() {
 	cout << '\n';
 	cb.submitMove("A5", "A6"); //black rook successfully moves 1 space backward
 	cout << '\n';
-	//cb.submitMove("A6", "A6"); //WANT TO TEST DIAGONAL
-	//cout << '\n';
+	cb.submitMove("H6", "G5"); //failure -- can't move diagonally
+	cout << '\n';
 
-      
+
+    //knight tests
+	cb.loadState("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq");
+	cout << '\n';
+
+	cb.submitMove("B1", "D2"); //failure -- white pawn is in destination
+	cout << '\n';
+	cb.submitMove("B1", "C3"); //success -- white knight moves
+	cout << '\n';
+	cb.submitMove("B8","B6"); //failure -- not a valid move for black knight
+	cout << '\n';
+	cb.submitMove("B8","A6"); //success -- black knight moves
+	cout << '\n';
+	cb.submitMove("C3", "B1"); //success -- white knight moves back to loadState initial position
+	cout << '\n';
+
 
 	//putting self in check tests
 	//note, not necessarily a realistic board setup; just designed for test purposes
 	cb.loadState("rnbqkbn1/pppppppp/8/8/8/4RB2/PPPPPPPP/RNBQK1Nr w KQkq");
 	//test moving white knight -- doing so will put white in check
 	cb.submitMove("G1", "H3"); //failure -- white knight cannot make a move that puts its king in check
-	cout << "Nicole's test failed, as expected" << endl;
+	cout << "Nicole''s test failed, which is expected" << endl;
 	cout << '\n';
 
 	//queen tests
