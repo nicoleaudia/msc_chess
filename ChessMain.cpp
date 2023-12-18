@@ -225,11 +225,8 @@ int main() {
 	cb.submitMove("B8", "D7");
 	cout << '\n';
 
-	//cb.printChessBoard(cb);
 	cb.submitMove("D1", "E2");
-	//cb.printChessBoard(cb);
 	cb.submitMove("D5", "E4");
-	//cb.printChessBoard(cb);
 	cout << '\n';
 
 	cb.submitMove("D3", "E4");
@@ -237,18 +234,14 @@ int main() {
 	cout << '\n';
 
 	cb.submitMove("E4", "D3");
-	//cb.printChessBoard(cb);
 	cb.submitMove("B7", "B6");
 	cout << '\n';
 
 	cb.submitMove("E2", "E6");
 	cb.submitMove("F7", "E6");
-	//cb.printChessBoard(cb);
-
 	cout << '\n';
 
 	cb.submitMove("D3", "G6");
-	//cb.printChessBoard(cb);
 	cout << '\n';
 
 	return 0;
