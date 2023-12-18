@@ -6,7 +6,6 @@
 
 using namespace std;
 
-
 int sign(int x){
   if (x == 0){return 0;}
   else if (x > 0){return 1;}
@@ -361,7 +360,7 @@ bool ChessBoard::isKingInCheckMate(Color c){
   return true;
 }
 
-void ChessBoard::printChessBoard(const ChessBoard& cb) {
+void ChessBoard::printChessBoard() {
     const int colWidth = 18;
 
     //print top line
@@ -375,7 +374,7 @@ void ChessBoard::printChessBoard(const ChessBoard& cb) {
     for (int row = 0; row < 8; ++row) {
         cout << 8 - row << "|";
         for (int col = 0; col < 8; ++col) {
-            const ChessPiece* piece = cb.getPiece(row, col);
+            const ChessPiece* piece = this->getPiece(row, col);
             cout << setw(colWidth) << piece;
         }
         cout << "|" << endl;

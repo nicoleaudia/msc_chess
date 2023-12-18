@@ -1,3 +1,5 @@
+/* Implementation file for ChessPiece class  */
+
 #include <iostream>
 #include <cstdlib> //for absolute value
 #include <cassert>
