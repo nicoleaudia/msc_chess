@@ -7,7 +7,7 @@
 enum Color { black, white };
 
 #include <iostream>
-#include "ChessBoard.h" //not sure if this include statement is needed
+#include "ChessBoard.h"
 
 class ChessBoard;
 

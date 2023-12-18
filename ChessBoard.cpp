@@ -1,12 +1,8 @@
 /* Implementation file for ChessBoard class  */
-#include <iostream> //is this necessary?
+#include <iostream>
 #include <cassert>
 #include <iomanip>
-
 #include "ChessPiece.h"
-
-// using std::cout;
-// using std::endl;
 
 using namespace std;
 
@@ -43,8 +39,6 @@ void ChessBoard::loadState(const char* fenRecord){
       // index to use in while loop
       int blankSpaceIndex = 0;
 
-      // cout << fenRecord[index] << "  " << blankSpaceNeeded << endl;
-
       // insert a null pointer (representing an empty space) into pointer array (the board)
       while (blankSpaceIndex < blankSpaceNeeded){
         boardLayout[row][col] = nullptr;
@@ -80,7 +74,7 @@ void ChessBoard::loadState(const char* fenRecord){
   //move the index by 2 to reach the castling characters
   index+=2; //start of castling bit of fen
 
-  std::cout << "A new board state is loaded!\n";
+  cout << "A new board state is loaded!\n";
 }
 
 //determine type of piece based on char in fen string
@@ -107,13 +101,10 @@ ChessPiece* ChessBoard::pieceIdentifier(char fenChar){
   else if (fenChar == 'k'){
     blackKingPtr = new King(pieceFenColor);
     ptr = blackKingPtr;
-    //cout << "black king is: " << blackKingPtr << endl;
   }
   else if (fenChar == 'K'){
     whiteKingPtr = new King(pieceFenColor);
     ptr = whiteKingPtr;
-    //cout << "white king is: " << whiteKingPtr << endl;
-
   }
   else {
     cerr << "Not a valid fen record character.\n";
@@ -181,66 +172,12 @@ void ChessBoard::submitMove(const char* startingPosition, const char* moveToPosi
     return;
   } 
 
-  //check if path is clear, if necessary (all pieces except knight)
-  // int rowDiff = moveToRow - startingRow;
-  // int colDiff = moveToCol - startingCol;
-
-  //at this point, it's been determined that the piece and the move are valid
-
-  //check if move will put playing color in check. if yes, not a valid move
-
-
-
-  
   //at this point, doesn't matter if color is in check or not. just want to make sure willMovePutInCheck returns false.
   //if color is in check already (due to opposite color), it is not in checkmate (or else the game would've ended). so, there is a legal move that can be made here that gets out of check
   if (willMovePutKingInCheck(turnColor, startingRow, startingCol, moveToRow, moveToCol)){
     cout << "move will put king in check" << endl;
     return;
   }
-  //if false, continue with move
-  //if true, return
-
-
-
-
-  
-  /*if (!isInCheck(turnColor)){
-    if (willCurrentColorBeInCheck(turnColor, startingRow, startingCol, moveToRow, moveToCol)){
-      cout << pieceToMove->getColor() << "'s " << pieceToMove->getName() << " cannot move from " << startingPosition << " to " << moveToPosition << " because it would put " 
-           << pieceToMove->getColor() << " in check! " << endl;
-      return;
-    }
-  }
-  else {
-    cout << turnColor << " is already in check. lol! let's see if we can get out of it..." << endl;
-    if (moveGetsOutOfCheck()){
-    }
-    if (!isInCheckMate(turnColor, startingRow, startingCol, moveToRow, moveToCol)){
-      cout << "that move worked, hooray" << endl;
-      //return;
-    }
-    //else if (){
-     // cout << 
-      //stalemate
-      //end game
-    //}
-    else {
-      cout << turnColor << " is in checkmate" << endl;
-      return;
-      //END GAME?????
-
-    }
-    //run a function to see if there are any moves (current move?) to get out of check
-
-  } */
-  
-  
-  // cout << "just came out of willcurrentcolorbeincheck. current info: moveToRow - " << moveToRow << ", moveToCol - " << moveToCol << ", board layout at that spot - "
-  // << boardLayout[4][2] << endl;
- 
-
-  //PLACEHOLDER FOR OTHER CHECKS, LIKE CHECK ---------
 
   ChessPiece* pieceToTake = boardLayout[moveToRow][moveToCol];
 
@@ -266,15 +203,13 @@ void ChessBoard::submitMove(const char* startingPosition, const char* moveToPosi
 
   //set currentTurnColor flag
   turnColor = (turnColor == white) ? black : white;
-  //cout << "it is " << turnColor << "'s move" << endl;
 
-  //check if move put OPPOSITE color in check
+  //check if move put opposite color in check. if yes, additionally check for checkmate or stalemate
   if (isKingInCheck(turnColor)){
     if (isKingInCheckMate(turnColor)){
       cout << turnColor << " is in checkmate" << endl;
       cout << '\n';
-      //end program
-      exit(0);
+      exit(0); //end program
     }
     cout << turnColor << " is in check" << endl;
   }
@@ -285,7 +220,6 @@ return;
 
 
 //isDiagonalClear- --------------------------------------------------------------------
-//tested
 bool ChessBoard::isDiagonalClear(int startingRow, int startingCol, int moveToRow, int moveToCol){
   int rowDiff = moveToRow - startingRow;
   int colDiff = moveToCol - startingCol;
@@ -300,14 +234,11 @@ bool ChessBoard::isDiagonalClear(int startingRow, int startingCol, int moveToRow
 
   while(r != moveToRow && c != moveToCol){
     if (boardLayout[r][c] != nullptr){
-      //cout << "noooooo" << endl;
       return false;
     }
-    //cout << "row: " << r << "  col: " << c << endl;
     r += rowDir;
     c += colDir;
   }
-  //cout << "piece can move diagonally " << rowDir << " : " << colDir << endl;
   return true;
 }
 
@@ -324,17 +255,13 @@ bool ChessBoard::isStraightClear(int startingRow, int startingCol, int moveToRow
   int r = startingRow + rowDir;
   int c = startingCol + colDir;
 
-  //cout << "r:" << r << "   c: " << c << endl;
-
   while(r != moveToRow || c != moveToCol){
     if (boardLayout[r][c] != nullptr){
       return false;
     }
-    //cout << "row: " << r << "  col: " << c << endl;
     r += rowDir;
     c += colDir;
   }
-  //cout << "piece can move straight. row direction: " << rowDir << ", col direction: " << colDir << endl;
   return true;
 }
 
@@ -349,7 +276,6 @@ void ChessBoard::findKing(King* king, int &row, int &col){
   for (row = 0; row < 8; row++){
     for (col = 0; col < 8; col++){
       if (this->getPiece(row, col) == king){
-        // cout << "found " << king->getColor() << "'s king at row: " << row << ", col: " << col << endl;
         return;
       }
     }
@@ -373,8 +299,6 @@ bool ChessBoard::isKingInCheck(Color c){
       ChessPiece* piece = getPiece(pieceRow, pieceCol);
       if (piece != nullptr && piece->getColor() == attackingColor){ //need to check that it isn't nullptr to prevent segfault
         if (piece->isValidMove(*this, pieceRow, pieceCol, kingRow, kingCol)){
-          //cout << "A piece that could put the king in check is " << piece->getColor() << "'s " << piece->getName() << " moving from row: " << pieceRow << ", col: " << pieceCol << ", to kingRow: "
-               //<< kingRow << ", kingCol: " << kingCol << endl;
           return true; //exit function as soon as any valid move that could attack the king is found
         }
       }
@@ -394,8 +318,7 @@ bool ChessBoard::willMovePutKingInCheck(Color c, int startingRow, int startingCo
   boardLayout[moveToRow][moveToCol] = pieceToMove;
     
   bool checkResult = isKingInCheck(c);  
-  //cout << "is in check?? " << checkResult << endl;
-  //cout << "the turn color that isInCheck is using is: " << c << endl;
+
 
   //restore original board state
   boardLayout[startingRow][startingCol] = pieceToMove;
@@ -406,13 +329,7 @@ bool ChessBoard::willMovePutKingInCheck(Color c, int startingRow, int startingCo
 
 //isInCheckMate ----------------------------------------------------------------------------------------- 
 bool ChessBoard::isKingInCheckMate(Color c){
-  // King* king = (c == white) ? whiteKingPtr : blackKingPtr; //if color is white, assign whiteKingPtr to king; otherwise, assign blackKingPtr
-  // Color attackingColor = (c == white) ? black : white; //if color is white, assign black (opposite color) to attackingColor; otherwise, assign white
-
-  // int kingRow, kingCol;
-  // ChessPiece* piece;
-  // findKing(king, kingRow, kingCol);
-
+ 
   bool isKingInCheckFlag = isKingInCheck(c);
 
   //safeguard to ensure king is actually in check and thus could be in checkmate
@@ -444,49 +361,17 @@ bool ChessBoard::isKingInCheckMate(Color c){
   return true;
 }
 
-
-/*
-bool ChessBoard::searchForValidMoves(Color c){
-  //this function looks for moves by the color in check
-
-  for (int pieceRow = 0; pieceRow < 8; pieceRow++){
-    for (int pieceCol = 0; pieceCol < 8; pieceCol++){ //loop through board to find a piece
-      ChessPiece* piece = getPiece(pieceRow, pieceCol); //grab piece; this position is now the starting position
-      if (piece != nullptr && piece->getColor() == c){ //if piece is of king's color, loop through possible moves from starting position and see if any are valid
-        for (int pieceMoveToRow = 0; pieceMoveToRow < 8; pieceMoveToRow++){
-          for (int pieceMoveToCol = 0; pieceMoveToCol < 8; pieceMoveToCol++){
-            if (piece->isValidMove(*this, pieceRow, pieceCol, pieceMoveToRow, pieceMoveToCol)){
-              return true; //if there is a valid move
-            }
-          }
-        }
-      }
-    }
-  }
-  return false;
-}*/
-
-
-
-  //see if proposed move gets color out of check -- if yes, flip isInCheck switch and proceed with move
-    //if no, see if there are any moves turnColor can make to get out of check (!isInCheck)
-      //if yes, return false
-      //if no, return true, meaning turnColor is in checkmate
-  
-
-
 void ChessBoard::printChessBoard(const ChessBoard& cb) {
-  // Set the width for each column
     const int colWidth = 18;
 
-    // Print the top line
+    //print top line
     cout << "   ";
     for (int col = 0; col < 8; ++col) {
         cout << setw(colWidth) << " +";
     }
     cout << endl;
 
-    // Loop through the board and print memory locations
+    //loop through board and print memory locations of pieces
     for (int row = 0; row < 8; ++row) {
         cout << 8 - row << "|";
         for (int col = 0; col < 8; ++col) {
@@ -495,7 +380,7 @@ void ChessBoard::printChessBoard(const ChessBoard& cb) {
         }
         cout << "|" << endl;
 
-        // Print the separator line
+        //print separator line
         cout << "   ";
         for (int col = 0; col < 8; ++col) {
             cout << setw(colWidth) << " +";
@@ -503,6 +388,6 @@ void ChessBoard::printChessBoard(const ChessBoard& cb) {
         cout << endl;
     }
 
-    // Print column labels
-    cout << "    a                b                c                d                e                f                g                h" << endl;
+    //print column labels
+    cout << "    A                B                C                D                E                F                G                H" << endl;
 }

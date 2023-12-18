@@ -2,7 +2,7 @@
 #include <cstdlib> //for absolute value
 #include <cassert>
 #include "ChessPiece.h"
-#include "ChessBoard.h" //trying this to see if i still get the error
+#include "ChessBoard.h"
 
 using namespace std;
 
@@ -80,67 +80,6 @@ bool Pawn::isValidMove(ChessBoard &cb, int startingRow, int startingCol, int mov
 
   return false;
 }
-/*
-  if (getColor() == white){
-    //check condition only allowed if it's first move
-    if (isFirstMove(startingRow)){
-      //still need to figure out how to check what's at location...
-      if((moveToRow == startingRow - 2) && (moveToCol == startingCol) && cb.isStraightClear(startingRow, startingCol, moveToRow, moveToCol) && cb.getPiece(moveToRow, moveToCol) == nullptr){
-        cout << cb.getPiece(moveToRow, moveToCol);
-        cout << "this is white pawn's first move, and it's moving 2 spaces forward." << endl;
-        return true;
-      }
-    }
-    //check conditions allowed for any valid move (including first)
-    if (!isFirstMove(startingRow) || isFirstMove(startingRow)){
-      if ((moveToRow == startingRow - 1) && (moveToCol == startingCol) && cb.isStraightClear(startingRow, startingCol, moveToRow, moveToCol) && cb.getPiece(moveToRow, moveToCol) == nullptr){
-        cout << cb.getPiece(moveToRow, moveToCol);
-        cout << "this is either the white pawn's first move or not, but it's moving forward 1 space." << endl;
-      return true;
-      }
-      if (moveToRow == startingRow - 1){
-        if ((moveToCol == startingCol + 1) || (moveToCol == startingCol - 1)){
-          if (cb.isDiagonalClear(startingRow, startingCol, moveToRow, moveToCol)){
-            cout << "this is either the white pawn's first move or not, but it's moving diagonally forward one space." << endl;
-            return true;
-          }
-        }
-      }   
-    } 
-  }//white brace
-
-  if (getColor() == black){
-    //check condition only allowed if it's first move
-    if (isFirstMove(startingRow)){
-      //still need to figure out how to check what's at location...
-      if((moveToRow == startingRow + 2) && (moveToCol == startingCol) && cb.isStraightClear(startingRow, startingCol, moveToRow, moveToCol) && cb.getPiece(moveToRow, moveToCol) == nullptr){
-        cout << cb.getPiece(moveToRow, moveToCol);
-        cout << "this is black pawn's first move, and it's moving 2 spaces forward." << endl;
-        return true;
-      }
-    }
-    //check conditions allowed for any valid move (including first)
-    if (!isFirstMove(startingRow) || isFirstMove(startingRow)){
-      if ((moveToRow == startingRow + 1) && (moveToCol == startingCol) && cb.isStraightClear(startingRow, startingCol, moveToRow, moveToCol) && cb.getPiece(moveToRow, moveToCol) == nullptr){
-        cout << cb.getPiece(moveToRow, moveToCol);
-        cout << "this is either the black pawn's first move or not, but it's moving forward 1 space." << endl;
-        return true;
-      }
-      if (moveToRow == startingRow + 1){
-        if ((moveToCol == startingCol + 1) || (moveToCol == startingCol - 1)){
-          if (cb.isDiagonalClear(startingRow, startingCol, moveToRow, moveToCol)){
-            cout << "this is either the black pawn's first move or not, but it's moving diagonally forward one space." << endl;
-            return true;
-          }
-        }
-      }
-    } 
-  } //black brace
-  
-  return false; 
-   //maybe need return msg? idk
-} */
-
 
 const char* Pawn::getName(){
   return "Pawn";
