@@ -272,6 +272,7 @@ void ChessBoard::submitMove(const char* startingPosition, const char* moveToPosi
   if (isKingInCheck(turnColor)){
     if (isKingInCheckMate(turnColor)){
       cout << turnColor << " is in checkmate" << endl;
+      cout << '\n';
       //end program
       exit(0);
     }
