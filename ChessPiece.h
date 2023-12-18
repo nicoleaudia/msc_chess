@@ -32,7 +32,7 @@ public:
   ChessPiece(Color c);
 
 
-  /* Purpose: Destroys a ChessPiece object.*/
+  /* Purpose: Destroys a ChessPiece object */
   virtual ~ChessPiece();
   
 

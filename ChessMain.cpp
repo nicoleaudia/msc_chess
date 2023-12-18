@@ -9,7 +9,7 @@ int main() {
 	cout << "Testing the Chess Engine\n";
 	cout << "========================\n\n";
 
-	ChessBoard cb;
+	ChessBoard cb; 
 	cb.loadState("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq");
 	cout << '\n';
 
@@ -23,10 +23,11 @@ int main() {
 	cout << '\n';
 
 	cb.submitMove("F8", "B4");
-	cout << '\n';
+	cout << '\n'; 
 
-	//tests I added 
+	//tests I added
 	/*
+	
 	cout << "===================================\n";
 	cout << "Nicole's tests for the Chess Engine\n";
 	cout << "===================================\n\n";
@@ -146,6 +147,7 @@ int main() {
 	//cb.submitMove("A6", "A6"); //WANT TO TEST DIAGONAL
 	//cout << '\n';
 
+      
 
 	//putting self in check tests
 	//note, not necessarily a realistic board setup; just designed for test purposes
@@ -188,15 +190,12 @@ int main() {
 	cb.submitMove("D3", "G6");
 	cout << '\n';
 	
-
 	//stalemate test
 	cout << "stalemate test\n";
 	cb.loadState("pK6/8/8/8/8/8/5Q2/7k w KQkq");
 	cb.submitMove("B8", "A8"); //white's move removes all valid moves for blackm thus stalemate
 	
 	*/
-
-
 	
 	cout << "=========================\n";
 	cout << "Alekhine vs. Vasic (1931)\n";

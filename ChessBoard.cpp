@@ -12,12 +12,31 @@ int sign(int x){
   else {return -1;}
 }
 
-ChessBoard::ChessBoard(){}
+ChessBoard::ChessBoard(){
+  
+  for (int row = 0; row < 8; row++){
+    for (int col = 0; col < 8; col++){
+      boardLayout[row][col] = nullptr;
+    }
+  }  
+}
+
 
 void ChessBoard::loadState(const char* fenRecord){
 
   int index = 0, row = 0, col = 0;
 
+  //delete pointers from previous loadState
+  for (int br = 0; br < 8; br++){
+    for (int bc = 0; bc < 8; bc++){
+      if (boardLayout[br][bc] != nullptr){
+	delete boardLayout[br][bc];
+	boardLayout[br][bc] = nullptr;
+      }
+    }
+  }
+  
+  
   //loop through FEN string until space (denotes we've passed the last square on the board)
   while (fenRecord[index] != ' '){
 
@@ -208,7 +227,13 @@ void ChessBoard::submitMove(const char* startingPosition, const char* moveToPosi
   if (isKingInCheck(turnColor)){
     if (isKingInCheckMate(turnColor)){
       cout << turnColor << " is in checkmate" << endl;
-      cout << '\n';
+      cout << '\n'; 
+      for (int row = 0; row < 8; row++){ //free up memory
+	for (int col = 0; col <8; col++){
+	  delete boardLayout[row][col];
+	  boardLayout[row][col] = nullptr;
+	}
+      }		  
       exit(0); //end program
     }
     cout << turnColor << " is in check" << endl;
@@ -217,7 +242,13 @@ void ChessBoard::submitMove(const char* startingPosition, const char* moveToPosi
   else {
     if (isStalemate(turnColor)){
       cout << turnColor << " has no valid moves, and thus the game ends in a stalemate" << endl;
-      cout << '\n';
+      cout << '\n'; 
+      for (int row = 0; row < 8; row++){ //free up memory
+	for (int col = 0; col <8; col++){
+	  delete boardLayout[row][col];
+	  boardLayout[row][col] = nullptr;
+        }
+      }		    
       exit(0); //end program
     }
   }
@@ -396,6 +427,7 @@ bool ChessBoard::isStalemate(Color c){
 
 
 void ChessBoard::printChessBoard() {
+    
     const int colWidth = 18;
 
     //print top line
